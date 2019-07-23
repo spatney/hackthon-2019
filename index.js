@@ -1,26 +1,19 @@
-const platformLib = require('./lib/platform');
 
-const platform = new platformLib.Platform(0, 1);
-const sleep = platformLib.sleep;
-const Direction = platformLib.Direction;
 
-async function runDemo() {
-    await platform.rotate(Direction.FRONT);
-    await sleep(0.1);
-    await platform.dump();
-    await sleep(1);
+const SpiderSocket = require('spider-device');
+const DeviceController = require('./lib/deviceController');
 
-    await platform.rotate(Direction.RIGHT);
-    await sleep(0.1);
-    await platform.dump();
-    await sleep(1);
+const socket = new SpiderSocket({
+    appId: 'bcabd300-42f3-462c-934e-e618033cabc6',
+    uid: 'bin'
+});
 
-    await platform.rotate(Direction.LEFT);
-    await sleep(0.1);
-    await platform.dump();
-    await sleep(1);
+const deviceController = new DeviceController(socket);
 
-    await platform.rotate(Direction.FRONT);
-}
-
-runDemo();
+socket.register(() => {
+    console.log('registered');
+    socket.on('command', command => {
+        console.log('running command', command);
+        deviceController.execCommand(command);
+    });
+});
