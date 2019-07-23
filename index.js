@@ -4,7 +4,7 @@ const platform = new platformLib.Platform(0, 1);
 const sleep = platformLib.sleep;
 const Direction = platformLib.Direction;
 
-function runDemo() {
+async function runDemo() {
     await platform.rotate(Direction.FRONT);
     await sleep(0.1);
     await platform.dump();
