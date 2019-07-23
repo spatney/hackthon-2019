@@ -1,10 +1,19 @@
 <html>
-
+<head>
+    <style>
+        #ip {
+            margin: 10px;
+            margin-left: 0;
+        }
+    </style>
+</head>
 <body>
+    <div id="ip">Getting IP address ...</div>
     <button onclick="action('recycle')">Recycle</button>
     <button onclick="action('trash')">Trash</button>
     <button onclick="action('compost')">Compost</button>
     <button onclick="demo()">Demo</button>
+    <button onclick="identify()">Identify</button>
     <div id="table"></div>
     <script src="soc.js"></script>
     <script src="client.js"></script>
@@ -17,10 +26,17 @@
         ref.subscribe(() => {
             console.log('subscribed');
 
-            ref.on('ip_result', d => console.log(d));
-            ref.emit('command', {device: 'ip'});
+            ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
+            ref.emit('command', {
+                device: 'ip'
+            });
         });
 
+        function identify() {
+            ref.emit('command', {
+                device: 'identify'
+            });
+        }
         function demo() {
             ref.emit('command', {
                 device: 'demo'
