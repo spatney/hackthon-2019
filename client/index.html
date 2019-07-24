@@ -1,20 +1,31 @@
 <html>
+
 <head>
     <style>
         #ip {
             margin: 10px;
             margin-left: 0;
         }
+        .section {
+            margin: 20px;
+            margin-left: 0;
+        }
     </style>
 </head>
+
 <body>
     <div id="ip">Getting IP address ...</div>
-    <button onclick="action('Recycle')">Recycle</button>
-    <button onclick="action('Trash')">Trash</button>
-    <button onclick="action('Compost')">Compost</button>
-    <button onclick="demo()">Demo</button>
-    <button onclick="identify()">Identify</button>
-    <button onclick="camera()">Camera</button>
+    <div class="section">
+        <button onclick="action('Recycle')">Recycle</button>
+        <button onclick="action('Trash')">Trash</button>
+        <button onclick="action('Compost')">Compost</button>
+    </div>
+    <div class="section">
+        <button onclick="demo()">Demo</button>
+        <button onclick="identify()">Identify</button>
+        <button onclick="camera()">Camera</button>
+        <button onclick="flow()">Start Flow</button>
+    </div>
     <div id="table"></div>
     <script src="soc.js"></script>
     <script src="client.js"></script>
@@ -46,6 +57,12 @@
         function camera() {
             ref.emit('command', {
                 device: 'camera'
+            });
+        }
+
+        function flow() {
+            ref.emit('command', {
+                device: 'flow'
             });
         }
 
