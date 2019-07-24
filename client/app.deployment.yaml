@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hack-app
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: hack-app
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hack-app
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: hack-app
+        image: graysense.azurecr.io/hack/app:1.0.1
+        ports:
+        - containerPort: 80
+          name: app
+        - containerPort: 443
+          name: app-ssl
+      imagePullSecrets:
+        - name: graycrkey
