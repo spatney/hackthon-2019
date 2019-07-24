@@ -23,6 +23,7 @@
         <div class="card-body">
             <section id="feedback-card" style="display: none">
                 <h5 class="card-title">What was the correct answer?</h5>
+                <canvas id="canvas"></canvas>
                 <button type="button" class="btn btn-success btn-lg" onclick="action('Recycle')">Recycle</button>
                 <button type="button" class="btn btn-dark btn-lg" onclick="action('Trash')">Trash</button>
                 <button type="button" class="btn btn-primary btn-lg" onclick="action('Compost')">Compost</button>
@@ -55,6 +56,14 @@
         ref.subscribe(() => {
             console.log('subscribed');
 
+            ref.on("image", function (info) {
+                if (info.image) {
+                    var ctx = document.getElementById('canvas').getContext('2d');
+                    var img = new Image();
+                    img.src = 'data:image/jpeg;base64,' + info.buffer;
+                    ctx.drawImage(img, 0, 0);
+                }
+            });
             ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
             ref.on('identify_result', d => {
                 FeedbackCard(true);
@@ -65,6 +74,7 @@
                     GOCard(true);
                     FeedbackCard(false);
                 }, 10000);
+
             });
             ref.emit('command', {
                 device: 'ip'
