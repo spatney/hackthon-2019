@@ -3,8 +3,6 @@ IMAGE=hack/app
 
 git pull
 
-npm run build
-
 az acr login --name graysense
 
 docker run --rm -v "$PWD":/app treeder/bump patch
