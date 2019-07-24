@@ -1,37 +1,52 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <style>
-        #ip {
-            margin: 10px;
-            margin-left: 0;
-        }
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        .section {
-            margin: 20px;
-            margin-left: 0;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Console</title>
 </head>
 
 <body>
-    <div id="ip">Getting IP address ...</div>
-    <div class="section">
-        <button onclick="action('Recycle')">Recycle</button>
-        <button onclick="action('Trash')">Trash</button>
-        <button onclick="action('Compost')">Compost</button>
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to OneBin!</h1>
+        <p class="lead">The future of recycling is here! No more headache of what bin to put your waste in.</p>
     </div>
-    <div class="section">
-        <button onclick="demo()">Demo</button>
-        <button onclick="identify()">Identify</button>
-        <button onclick="camera()">Camera</button>
-        <button onclick="flow()">Start Flow</button>
+    <div class="alert alert-dark" role="alert" id="identity"></div>
+    <div class="card">
+        <div class="card-body">
+            <section id="feedback-card" style="display: none">
+                <h5 class="card-title">What was the correct answer?</h5>
+                <button type="button" class="btn btn-success btn-lg" onclick="action('Recycle')">Recycle</button>
+                <button type="button" class="btn btn-dark btn-lg" onclick="action('Trash')">Trash</button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="action('Compost')">Compost</button>
+            </section>
+            <section id="go-card" style="display: none">
+                <button type="button" class="btn btn-success btn-lg" onclick="flow()">START</button>
+            </section>
+        </div>
     </div>
-    <div id="identity">Nothing identified yet</div>
-    <div id="table"></div>
+    <div id="debug-card" class="card" style="display: none">
+        <div class="card-body">
+            <h5 class="card-title">Debug</h5>
+            <div class="alert alert-success" role="alert" id="ip">Getting Device IP address ...</div>
+            <button type="button" class="btn btn-warning" onclick="demo()">Test</button>
+            <button type="button" class="btn btn-warning" onclick="identify()">Identify</button>
+            <button type="button" class="btn btn-warning" onclick="camera()">Camera</button>
+            <button type="button" class="btn btn-warning" onclick="flow()">Start Flow</button>
+        </div>
+    </div>
     <script src="soc.js"></script>
     <script src="client.js"></script>
     <script>
+        let timeoutId = 0;
+
         let ref = new SocketClient({
             appId: 'bcabd300-42f3-462c-934e-e618033cabc6',
             uid: 'bin'
@@ -41,7 +56,16 @@
             console.log('subscribed');
 
             ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
-            ref.on('identify_result', d => document.getElementById('identity').innerHTML = `I thought that was <b>${d.type}</b> What do you think?`);
+            ref.on('identify_result', d => {
+                FeedbackCard(true);
+                GOCard(false);
+                document.getElementById('identity').innerHTML = `I thought that was <b>${d.type}</b>.`;
+
+                timeoutId = setTimeout(() => {
+                    GOCard(true);
+                    FeedbackCard(false);
+                }, 10000);
+            });
             ref.emit('command', {
                 device: 'ip'
             });
@@ -68,6 +92,7 @@
         }
 
         function flow() {
+            GOCard(false);
             document.getElementById('identity').innerHTML = `Identifying ... `
             ref.emit('command', {
                 device: 'flow'
@@ -75,12 +100,58 @@
         }
 
         function action(binId) {
+            clearTimeout(timeoutId);
+            GOCard(true);
+            FeedbackCard(false);
             ref.emit('command', {
                 device: 'classify',
                 data: binId
             });
         }
+
+        function GOCard(show) {
+            if (show) {
+                document.getElementById('identity').innerHTML = `Nothing to identify`;
+            }
+            document.getElementById('go-card').style.display = show ? "block" : "none";
+
+        }
+
+        function FeedbackCard(show) {
+            document.getElementById('feedback-card').style.display = show ? "block" : "none";
+        }
+
+        GOCard(true);
+        FeedbackCard(false);
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        const value = getUrlParameter('debug');
+
+        if (value === '1') {
+            console.log('debug');
+            document.getElementById('debug-card').style.display = "block";
+        } else {
+            document.getElementById('debug-card').style.display = "none";
+        }
     </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
