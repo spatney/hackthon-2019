@@ -70,7 +70,7 @@
                     //ctx.drawImage(img, 0, 0);
                 }
             });
-            ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
+            ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b> & <b>${d.public}</b>`);
             ref.on('identify_result', d => {
                 FeedbackCard(true);
                 GOCard(false);
