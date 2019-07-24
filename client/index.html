@@ -26,6 +26,7 @@
         <button onclick="camera()">Camera</button>
         <button onclick="flow()">Start Flow</button>
     </div>
+    <div id="identity">Nothing identified yet</div>
     <div id="table"></div>
     <script src="soc.js"></script>
     <script src="client.js"></script>
@@ -39,6 +40,7 @@
             console.log('subscribed');
 
             ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
+            ref.on('identify_result', d => document.getElementById('identity').innerHTML = `I thought that was <b>${d.type}</b> What do you think?`);
             ref.emit('command', {
                 device: 'ip'
             });
