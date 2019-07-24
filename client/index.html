@@ -11,6 +11,12 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>Console</title>
+    <style>
+        #feedback-image {
+            width: 340px;
+            height: 272px;
+        }
+    </style>
 </head>
 
 <body>
@@ -20,10 +26,10 @@
     </div>
     <div class="alert alert-dark" role="alert" id="identity"></div>
     <div class="card">
+        <h5 id="feedback-title" class="card-title">What was the correct answer?</h5>
+        <img id="feedback-image" class="card-img-top">
         <div class="card-body">
             <section id="feedback-card" style="display: none">
-                <h5 class="card-title">What was the correct answer?</h5>
-                <canvas id="canvas"></canvas>
                 <button type="button" class="btn btn-success btn-lg" onclick="action('Recycle')">Recycle</button>
                 <button type="button" class="btn btn-dark btn-lg" onclick="action('Trash')">Trash</button>
                 <button type="button" class="btn btn-primary btn-lg" onclick="action('Compost')">Compost</button>
@@ -58,10 +64,10 @@
 
             ref.on("image", function (info) {
                 if (info.image) {
-                    var ctx = document.getElementById('canvas').getContext('2d');
-                    var img = new Image();
+                    //var ctx = .getContext('2d');
+                    var img = document.getElementById('feedback-image')
                     img.src = 'data:image/jpeg;base64,' + info.buffer;
-                    ctx.drawImage(img, 0, 0);
+                    //ctx.drawImage(img, 0, 0);
                 }
             });
             ref.on('ip_result', d => document.getElementById('ip').innerHTML = `Device is @ <b>${d.internal}</b>`);
@@ -129,6 +135,8 @@
 
         function FeedbackCard(show) {
             document.getElementById('feedback-card').style.display = show ? "block" : "none";
+            document.getElementById('feedback-title').style.display = show ? "block" : "none";
+            document.getElementById('feedback-image').style.display = show ? "block" : "none";
         }
 
         GOCard(true);
