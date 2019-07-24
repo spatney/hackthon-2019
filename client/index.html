@@ -63,6 +63,7 @@
         }
 
         function flow() {
+            document.getElementById('identity').innerHTML = `Identifying ... `
             ref.emit('command', {
                 device: 'flow'
             });
