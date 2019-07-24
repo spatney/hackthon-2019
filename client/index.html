@@ -6,6 +6,7 @@
             margin: 10px;
             margin-left: 0;
         }
+
         .section {
             margin: 20px;
             margin-left: 0;
@@ -43,6 +44,10 @@
             ref.on('identify_result', d => document.getElementById('identity').innerHTML = `I thought that was <b>${d.type}</b> What do you think?`);
             ref.emit('command', {
                 device: 'ip'
+            });
+
+            ref.on('iot:error', e => {
+                document.getElementById('ip').innerHTML = e.error
             });
         });
 
