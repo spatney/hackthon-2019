@@ -9,11 +9,12 @@
 </head>
 <body>
     <div id="ip">Getting IP address ...</div>
-    <button onclick="action('recycle')">Recycle</button>
-    <button onclick="action('trash')">Trash</button>
-    <button onclick="action('compost')">Compost</button>
+    <button onclick="action('Recycle')">Recycle</button>
+    <button onclick="action('Trash')">Trash</button>
+    <button onclick="action('Compost')">Compost</button>
     <button onclick="demo()">Demo</button>
     <button onclick="identify()">Identify</button>
+    <button onclick="camera()">Camera</button>
     <div id="table"></div>
     <script src="soc.js"></script>
     <script src="client.js"></script>
@@ -40,6 +41,11 @@
         function demo() {
             ref.emit('command', {
                 device: 'demo'
+            });
+        }
+        function camera() {
+            ref.emit('command', {
+                device: 'camera'
             });
         }
 
