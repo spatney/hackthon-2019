@@ -144,7 +144,7 @@
             data.tId = 'classify';
             data.correct = type === binId;
             data.machine = type;
-            data.user = type;
+            data.user = binId;
             postAjax('https://service.graysense.io/push/collection/596ec6d2-a810-48db-a020-60a9d9635463', data, () => console.log('posted1'));
         }
 
