@@ -55,11 +55,13 @@
             <button type="button" class="btn btn-warning" onclick="flow()">Start Flow</button>
         </div>
     </div>
+
     <script src="soc.js"></script>
     <script src="client.js"></script>
     <script>
         let timeoutId = 0;
         let type;
+        let PUSH_URL = "https://api.powerbi.com/beta/72f988bf-86f1-41af-91ab-2d7cd011db47/datasets/2c8bb55e-01b6-47c0-a62a-6119f1cb3861/rows?key=yFkQFuEynSE%2B%2FyTr8I1D2Z%2FAuhFwoHc9Re2WjOmhrd5bsrWccdchLyBE2iQll8EYewGIFdUtBYYVQK0aYXEGew%3D%3D";
 
         let ref = new SocketClient({
             appId: 'bcabd300-42f3-462c-934e-e618033cabc6',
@@ -90,7 +92,11 @@
                 document.getElementById('identity').innerHTML = `I thought that was <b>${d.type}</b>.`;
 
                 d.tId = 'identify';
-                postAjax('https://service.graysense.io/push/collection/596ec6d2-a810-48db-a020-60a9d9635463', d, () => console.log('posted0'));
+                d.correct = "";
+                d.machine = "";
+                d.user = "";
+
+                postAjax(PUSH_URL, d, () => console.log('posted0'));
 
                 timeoutId = setTimeout(() => {
                     GOCard(true);
@@ -140,12 +146,15 @@
                 data: binId
             });
 
-            let data = {};
+            let data = {
+                score: -1,
+                type: "no-type"
+            };
             data.tId = 'classify';
-            data.correct = type === binId;
+            data.correct = `${type === binId}`;
             data.machine = type;
             data.user = binId;
-            postAjax('https://service.graysense.io/push/collection/596ec6d2-a810-48db-a020-60a9d9635463', data, () => console.log('posted1'));
+            postAjax(PUSH_URL, data, () => console.log('posted1'));
         }
 
         function GOCard(show) {
@@ -163,19 +172,17 @@
         }
 
         function postAjax(url, data, success) {
-            var params = typeof data == 'string' ? data : Object.keys(data).map(
-                function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }
-            ).join('&');
-
-            var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-            xhr.open('POST', url);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState > 3 && xhr.status == 200) { success(xhr.responseText); }
-            };
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send(params);
-            return xhr;
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: JSON.stringify([data]),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) { success(); },
+                failure: function (errMsg) {
+                    console.log(errMsg);
+                }
+            });
         }
 
 
@@ -201,9 +208,7 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
